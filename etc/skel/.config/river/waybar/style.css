@@ -1,0 +1,125 @@
+/**
+ * solarized dark colorscheme:
+ *
+ * base03    #002b36
+ * base02    #073642
+ * base01    #586e75
+ * base00    #657b83
+ * base0     #839496
+ * base1     #93a1a1
+ * base2     #eee8d5
+ * base3     #fdf6e3
+ * yellow    #b58900
+ * orange    #cb4b16
+ * red       #dc322f
+ * magenta   #d33682
+ * violet    #6c71c4
+ * blue      #268bd2
+ * cyan      #2aa198
+ * green     #859900
+ */
+
+* {
+    border-radius: 0;
+    font-family: "JetbrainsMono Nerd Font";
+    font-size: 14px;
+    min-height: 0;
+}
+
+window#waybar {
+    background-color: rgb(70, 0, 15);
+    /* background-color: rgba(0, 0, 0, 0); transparent */
+}
+
+#tags {
+    margin-top: 0px;
+    margin-left: 0px;
+    margin-bottom: 1px;
+    padding: 0px;
+    border: 0px solid #93a1a1;
+    /*base1*/
+}
+
+#tags button {
+    margin: 1px;
+    padding: 1px 1px;
+    color: #92a1a1;
+    border: 0px solid #073642;
+    /*base02*/
+}
+
+/* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
+#tags button:hover {
+    box-shadow: inherit;
+    text-shadow: inherit;
+}
+
+#tags button.focused {
+    color: #dc322f;
+    /* red */
+    border: 0px solid #073642;
+    /*base02*/
+}
+
+#tags button.occupied {
+    /* color: #b58900; */
+    color: #fcffa4;
+    /* yellow */
+    /* border: 1px solid #93a1a1; base1*/
+}
+
+#tags button.urgent {
+    border: 1px solid #dc322f;
+    /*red*/
+}
+
+#tags button.occupied.urgent {
+    border: 1px solid #dc322f;
+    /*red*/
+}
+
+#tags button.focused.occupied {
+    /* focused windows */
+    color: #7cfc00;
+    /* green */
+    border: 1px solid #7cfc00;
+    /* green*/
+}
+
+#battery,
+#clock,
+#cpu,
+#memory,
+#network,
+#pulseaudio,
+#temperature,
+#window {
+    padding: 1px 1px;
+    margin-top: 0px;
+    margin-left: 6px;
+    margin-right: 12px;
+    margin-bottom: 1px;
+    color: #93a1a1;
+    /*base1*/
+
+}
+
+#cpu.warning,
+#memory.warning {
+    border: 1px solid #b58900;
+    /*yellow*/
+}
+
+#cpu.critical,
+#memory.critical,
+#temperature.critical {
+    border: 1px solid #dc322f;
+    /*red*/
+}
+
+#tray {
+    padding-left: 10px;
+    padding-right: 1px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+}
