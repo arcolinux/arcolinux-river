@@ -39,7 +39,7 @@ riverctl map normal $mod D spawn "wofi --show drun"
 riverctl map normal $mod B spawn "$HOME/.config/river/scripts/pkill_background-changer &"
 riverctl map normal $mod R spawn "bash ~/.config/river/scripts/killall_and_restart" # reload river
 riverctl map normal $mod Return spawn 'alacritty'
-riverctl map normal $mod+Shift Return spawn 'doublecmd'
+riverctl map normal $mod+Shift Return spawn 'thunar'
 riverctl map normal $mod Q close # close the focused view
 # riverctl map normal $mod+Shift L spawn "swaylock -F -l -i ~/.config/river/wallpapers/arch01.jpg"
 riverctl map normal $mod+Shift X spawn "bash ~/.config/river/scripts/leave.sh"
