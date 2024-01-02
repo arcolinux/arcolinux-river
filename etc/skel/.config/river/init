@@ -9,6 +9,7 @@
 #Mod4 (Super, Logo, Windows)
 #Mod5
 #None (Create a mapping without modifiers)
+# Note: the "Super" modifier is also known as Logo, GUI, Windows, Mod4, etc.
 
 # This is the example configuration file for river.
 #
@@ -156,7 +157,7 @@ riverctl spawn-tagmask ${all_but_scratch_tag}
 # not have a modifier
 for mode in normal locked
 do
-    # Eject the optical drive
+    # Eject the optical drive (well if you still have one that is)
     riverctl map $mode None XF86Eject spawn 'eject -T'
 
     # Control pulse audio volume
@@ -176,10 +177,11 @@ do
 done
 
 # Set background and border color
-riverctl background-color 0x282828 # without it, no windows appears
-riverctl border-color-focused 0x92a58b
+riverctl background-color 0x002b36
+riverctl border-color-focused 0x93a1a1
+riverctl border-color-unfocused 0x586e75
 
-# Set repeat rate
+# Set keyboard repeat rate
 riverctl set-repeat 50 300
 
 # Set app-ids of views which should float
@@ -210,4 +212,13 @@ riverctl focus-follows-cursor always # disabled normal always
 riverctl input "1118:64:Microsoft_Microsoft_3-Button_Mouse_with_IntelliEye(TM)" events enabled
 riverctl input "1118:64:Microsoft_Microsoft_3-Button_Mouse_with_IntelliEye(TM)" pointer-accel 1.0
 
-exec rivertile -view-padding 0 -outer-padding 0
+# Make all views with an app-id that starts with "float" and title "foo" start floating.
+riverctl rule-add -app-id 'float*' -title 'foo' float
+
+# Make all views with app-id "bar" and any title use client-side decorations
+riverctl rule-add -app-id "bar" csd
+
+# Set the default layout generator to be rivertile and start it.
+# River will send the process group of the init executable SIGTERM on exit.
+riverctl default-layout rivertile
+rivertile -view-padding 6 -outer-padding 6 &
