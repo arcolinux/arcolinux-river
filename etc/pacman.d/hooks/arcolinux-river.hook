@@ -1,0 +1,11 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = river
+Target = river-git
+
+[Action]
+Description = Modifying Wayfire Desktop file...
+When = PostTransaction
+Exec = /usr/bin/sed -i -e 's/Exec=.*/Exec=run-river/g' /usr/share/wayland-sessions/river.desktop
