@@ -6,6 +6,6 @@ Target = river
 Target = river-git
 
 [Action]
-Description = Modifying Wayfire Desktop file...
+Description = Modifying River Desktop file...
 When = PostTransaction
 Exec = /usr/bin/sed -i -e 's/Exec=.*/Exec=run-river/g' /usr/share/wayland-sessions/river.desktop
