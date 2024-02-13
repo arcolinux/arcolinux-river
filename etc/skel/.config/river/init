@@ -161,12 +161,12 @@ local mappings = {
       {
         mod = 'Super',
         key = 'Return',
-        command = { 'spawn', 'foot' },
+        command = { 'spawn', 'alacritty' },
       },
       {
         mod = { 'Super', 'Shift' },
         key = 'Return',
-        command = { 'spawn', 'alacritty' },
+        command = { 'spawn', 'thunar' },
       },
       -- Application launcher
       {
