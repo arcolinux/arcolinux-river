@@ -89,4 +89,5 @@ export TZ=$(cat /etc/timezone)
 
 ## Start River
 sleep 0.5;
-river
+# river
+river -log-level debug > river.log 2>&1
