@@ -1,96 +1,68 @@
 #!/usr/bin/env bash
 
-# This script is not my original work and only some of it is modified to work better and to look better.
-# The link to the gist is below:
-# https://gist.githubusercontent.com/Blaradox/030f06d165a82583ae817ee954438f2e/raw/cd375e1f11f7aa23f9b23d3554d12f2d2c0b57db/volumeControl.sh
+## Copyright (C) 2020-2022 Aditya Shakya <adi1090x@gmail.com>
+## Everyone is permitted to copy and distribute copies of this file under GNU-GPL3
 
-# You can call this script like this:
-# $ ./volumeControl.sh up
-# $ ./volumeControl.sh down
-# $ ./volumeControl.sh mute
+## Script To Manage Speaker Volume For Archcraft (in Wayland).
 
-# Script modified from these wonderful people:
-# https://github.com/dastorm/volume-notification-dunst/blob/master/volume.sh
-# https://gist.github.com/sebastiencs/5d7227f388d93374cebdf72e783fbd6a
+iDIR="$HOME/.config/wayfire/mako/icons"
 
-
-# First balance both channels
-#amixer set Master 100%,100%
-
-function get_volume {
-  amixer get Master | grep '%' | head -n 1 | cut -d '[' -f 2 | cut -d '%' -f 1
+# Get Volume
+get_volume() {
+	volume=`amixer get Master | tail -n1 | awk -F ' ' '{print $5}' | tr -d '[]'`
+	echo "$volume"
 }
 
-function is_mute {
-  amixer get Master | grep '%' | grep -oE '[^ ]+$' | grep off > /dev/null
+# Get icons
+get_icon() {
+	vol="$(get_volume)"
+	current="${vol%%%}"
+	if [[ "$current" -eq "0" ]]; then
+		icon="$iDIR/volume-mute.png"
+	elif [[ ("$current" -ge "0") && ("$current" -le "30") ]]; then
+		icon="$iDIR/volume-low.png"
+	elif [[ ("$current" -ge "30") && ("$current" -le "60") ]]; then
+		icon="$iDIR/volume-mid.png"
+	elif [[ ("$current" -ge "60") && ("$current" -le "100") ]]; then
+		icon="$iDIR/volume-high.png"
+	fi
 }
 
-function send_notification {
-  iconVolumeUp="/usr/share/pixmaps/volume-up.png"
-  iconVolumeDown="/usr/share/pixmaps/volume-down.png"
-  iconMuted="/usr/share/pixmaps/no-sound.png"
-  iconPaused="/usr/share/pixmaps/pause.png"
-  iconNext="/usr/share/pixmaps/next.png"
-  iconPrevious="/usr/share/pixmaps/previous.png"
-  if is_mute ; then
-    dunstify -i $iconMuted -r 2593 -u normal "mute"
-  else
-    volume=$(get_volume)
-    # Make the bar with the special character ─ (it's not dash -)
-    # https://en.wikipedia.org/wiki/Box-drawing_character
-    bar=$(seq --separator="─" 0 "$((volume / 5))" | sed 's/[0-9]//g')
-    percentage=$(amixer -D pulse get Master | awk -F 'Left:|[][]' 'BEGIN {RS=""}{ print $3 }')   
-
-    # the below portion is separately called within each of the cases
-    # uncomment the command below if you want to use only one instance of dunstify for both vol-up and vol-down
-    # Send the notification
-    #dunstify -i $iconVolumeUp -r 2593 -u normal "Current Volume: $percentage " "$bar"
-  fi
+# Notify
+notify_user() {
+	notify-send -h string:x-canonical-private-synchronous:sys-notify -u low -i "$icon" "Volume : $(get_volume)"
 }
 
-case $1 in
-  up)
-    # set the volume on (if it was muted)
-    amixer -D pulse set Master on > /dev/null
-    # up the volume (+ 5%)
-    amixer -D pulse sset Master 5%+ > /dev/null
+# Increase Volume
+inc_volume() {
+	amixer -Mq set Master,0 5%+ unmute && get_icon && notify_user
+}
 
-    # when you call the function, the variables would also be available withint this scope
-    send_notification
-    dunstify -i $iconVolumeUp -r 2593 -u normal -t 1000 "Current Volume: $percentage " "$bar"
+# Decrease Volume
+dec_volume() {
+	amixer -Mq set Master,0 5%- unmute && get_icon && notify_user
+}
 
-    ;;
-  down)
-    amixer -D pulse set Master on > /dev/null
-    amixer -D pulse sset Master 5%- > /dev/null
+# Toggle Mute
+toggle_mute() {
+	status=`amixer get Master | tail -n1 | grep -wo 'on'`
 
-    # when you call the function, the variables would also be available within this scope
-    send_notification
-    dunstify -i $iconVolumeDown -r 2593 -u normal -t 1000 "Current Volume: $percentage " "$bar"
-    
-    ;;
-  mute)
-    # toggle mute
-    amixer -D pulse set Master 1+ toggle > /dev/null
-    send_notification
-    ;;
-  pause)
-    # pause media
-    playerctl play-pause
-    send_notification
-    dunstify -i $iconPaused -r 2593 -u normal -t 1000 "Play/Pause"
-    ;;
-  next)
-    # pause media
-    playerctl next
-    send_notification
-    dunstify -i $iconNext -r 2593 -u normal -t 1000 "Playing"
-    ;;
+	if [[ "$status" == "on" ]]; then
+		amixer set Master toggle && notify-send -h string:x-canonical-private-synchronous:sys-notify -u low -i "$iDIR/volume-mute.png" "Mute"
+	else
+		amixer set Master toggle && get_icon && notify-send -h string:x-canonical-private-synchronous:sys-notify -u low -i "$icon" "Unmute"
+	fi
+}
 
-  previous)
-    # pause media
-    playerctl previous
-    send_notification
-    dunstify -i $iconPrevious -r 2593 -u normal -t 1000 "Playing"
-    ;;
-esac
+# Execute accordingly
+if [[ "$1" == "--get" ]]; then
+	get_volume
+elif [[ "$1" == "--inc" ]]; then
+	inc_volume
+elif [[ "$1" == "--dec" ]]; then
+	dec_volume
+elif [[ "$1" == "--toggle" ]]; then
+	toggle_mute
+else
+	get_volume
+fi
