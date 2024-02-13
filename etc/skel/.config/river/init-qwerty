@@ -19,6 +19,7 @@ riverctl spawn "dunst"
 riverctl spawn "thunar"
 riverctl spawn "alacritty"
 
+alias rmn="riverctl map normal"
 
 # Super+Shift+Return to start an instance of foot (https://codeberg.org/dnkl/foot)
 riverctl map normal Super+Shift Return spawn foot
